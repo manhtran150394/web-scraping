@@ -4,6 +4,7 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+import base64
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
@@ -143,7 +144,7 @@ class SsvscraperFakeUserAgentMiddleware:
         random_user_agent = self._get_random_user_agent()
         request.headers['User-Agent'] = random_user_agent
 
-        print("************ NEW HEADER ATTACHED *******")
+        print("************ NEW USER AGENT ATTACHED *******")
         print(request.headers['User-Agent'])
 
 
@@ -184,8 +185,8 @@ class SsvscraperFakeBrowserHeaderAgentMiddleware:
         random_browser_header = self._get_random_browser_header()
 
         request.headers['accept-language'] = random_browser_header['accept-language']
-        request.headers['sec-fetch-user'] = random_browser_header['sec-fetch-user'] 
-        request.headers['sec-fetch-mod'] = random_browser_header['sec-fetch-mod'] 
+        # request.headers['sec-fetch-user'] = random_browser_header['sec-fetch-user'] 
+        # request.headers['sec-fetch-mode'] = random_browser_header['sec-fetch-mode'] 
         request.headers['sec-fetch-site'] = random_browser_header['sec-fetch-site'] 
         request.headers['sec-ch-ua-platform'] = random_browser_header['sec-ch-ua-platform'] 
         request.headers['sec-ch-ua-mobile'] = random_browser_header['sec-ch-ua-mobile'] 
@@ -195,5 +196,24 @@ class SsvscraperFakeBrowserHeaderAgentMiddleware:
         request.headers['upgrade-insecure-requests'] = random_browser_header.get('upgrade-insecure-requests')
     
 
-        print("************ NEW HEADER ATTACHED *******")
+        print("************ NEW BROWSER HEADER ATTACHED *******")
         print(request.headers)        
+
+class SsvscraperProxyMiddleware(object):
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings)
+    
+    def __init__(self, settings):
+        self.user = settings.get('PROXY_USER')
+        self.password = settings.get('PROXY_PASSWORD')
+        self.endpoint = settings.get('PROXY_ENDPOINT')
+        self.port = settings.get('PROXY_PORT')
+
+    def process_request(self, request, spider):
+        user_credentials = '{user}:{passw}'.format(user=self.user, passw=self.password)
+        basic_authentication = 'Basic ' + base64.b64encode(user_credentials.encode()).decode()
+        host = 'http://{endpoint}:{port}'.format(endpoint=self.endpoint, port=self.port)
+        request.meta['proxy'] = host
+        request.headers['Proxy-Authorization'] = basic_authentication
