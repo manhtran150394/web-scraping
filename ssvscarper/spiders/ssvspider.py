@@ -36,9 +36,15 @@ class SsvspiderSpider(scrapy.Spider):
         stirItem = StirItem()
         corporate = response.json()['pageProps']['companyResponse']['company']
 
+        city = ''
+        if corporate['city']['name'] is not None:
+            city = corporate['city']['name']
+
         mainIndustry = corporate['industryDetail']['name']
         # if mainIndustry != 'IT':
         #     return
+
+
 
         subIndustriesObj = corporate['industrySubsDetail']
         # print('1 ===========> ' + subIndustriesObj)
@@ -59,10 +65,12 @@ class SsvspiderSpider(scrapy.Spider):
             isOutOfBusinessText = ''
         businessTagsListObj = corporate['businessTags']
         businessTagsList = []
-        for businessTag in businessTagsListObj:
-            businessTagsList.append(businessTag['name'])
+        businessTagsText = ''
+        if businessTagsListObj is not None:
+            for businessTag in businessTagsListObj:
+                businessTagsList.append(businessTag['name'])
             # businessTagsText += businessTag['name'] + '、' 
-        businessTagsText = '、'.join(businessTagsList)
+            businessTagsText = '、'.join(businessTagsList)
         # technologiesList = corporate['technologies']
         # technologiesText = '、'.join(technologiesList)
         # for technology in technologiesList:
@@ -73,7 +81,7 @@ class SsvspiderSpider(scrapy.Spider):
             'Corp Num': corporate['corporateNumber'],
             '企業名': corporate['name'],
             '都道府県': corporate['prefecture']['name'],
-            '市内': corporate['city']['name'],
+            '市内': city,
             'Homepage': corporate['url'],
             'ステータス': isOutOfBusinessText,
             '上場': corporate['listingClassification'],
