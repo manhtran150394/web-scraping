@@ -12,6 +12,8 @@ BOT_NAME = "ssvscarper"
 SPIDER_MODULES = ["ssvscarper.spiders"]
 NEWSPIDER_MODULE = "ssvscarper.spiders"
 
+SCRAPEOPS_API_KEY = '3e993a5d-8b88-45c6-94c5-e776f6f435b2'
+
 # SCRAPEOPS_API_KEY = '3e993a5d-8b88-45c6-94c5-e776f6f435b2'
 # SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents'
 # SCRAPEOPS_FAKE_USER_AGENT_ENABLED = True
@@ -80,12 +82,19 @@ CONCURRENT_REQUESTS = 32
 #    # 'ssvscarper.middlewares.SsvscraperFakeUserAgentMiddleware': 400,
 #    # 'ssvscarper.middlewares.SsvscraperProxyMiddleware': 350,
 # }
+DOWNLOADER_MIDDLEWARES = {
+    'scrapeops_scrapy.middleware.retry.RetryMiddleware': 550,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
 #    "scrapy.extensions.telnet.TelnetConsole": None,
 #}
+EXTENSIONS = {
+    'scrapeops_scrapy.extension.ScrapeOpsMonitor': 500, 
+}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
