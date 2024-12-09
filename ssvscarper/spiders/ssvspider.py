@@ -31,8 +31,8 @@ class SsvspiderSpider(scrapy.Spider):
         # for url in urls:
 
     def parse(self, response):
-        # if response.status != 200:
-        #     return
+        if response.status != 200:
+            return
         stirItem = StirItem()
         corporate = response.json()['pageProps']['companyResponse']['company']
 
