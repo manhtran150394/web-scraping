@@ -8,7 +8,8 @@ def get_urls_from_csv():
         data = csv.reader(csv_file)
         scrapurls = []
         for row in data:
-            url = "https://salesnow.jp/db/_next/data/ej1CMr-XFJsvEJFG9iKM6/companies/" + row[0] + ".json"
+            # url = "https://salesnow.jp/db/_next/data/ej1CMr-XFJsvEJFG9iKM6/companies/" + row[0] + ".json"
+            url = "https://salesnow.jp/db/_next/data/cAhoZJzbkQD8AYPJ5HjYs/companies/" + row[0] + ".json"
             scrapurls.append(url)
         return scrapurls
     
