@@ -36,8 +36,8 @@ class SsvspiderSpider(scrapy.Spider):
         stirItem = StirItem()
         corporate = response.json()['pageProps']['companyResponse']['company']
 
-        city = ''
-        if corporate['city']['name'] is not None:
+        city = corporate['city']
+        if corporate['city'] is not None:
             city = corporate['city']['name']
 
         mainIndustry = corporate['industryDetail']['name']
